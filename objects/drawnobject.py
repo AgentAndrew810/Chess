@@ -1,4 +1,4 @@
-class GameObject:
+class DrawnObject:
     instances = []
 
     def __init__(self) -> None:
@@ -23,6 +23,8 @@ class GameObject:
         # calculate the x_padd and y_padd based on if the height or width was adjusted
         cls.x_padd = cls.padd + (screen_width - width) // 2
         cls.y_padd = cls.padd + (screen_height - height) // 2
+        
+        print("Here")
 
         # if instance has an update method call it
         for instance in cls.instances:
