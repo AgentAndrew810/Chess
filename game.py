@@ -101,19 +101,8 @@ class Game(DrawnObject):
             piece = self.board.board[pos]
 
             # draw the piece
-            if piece:
-                # if the current piece is the held piece
-                if pos == self.held_piece:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    # draw the held piece adjusted for mouse offset
-                    screen.blit(
-                        self.images[piece],
-                        (mouse_x - self.x_offset, mouse_y - self.y_offset),
-                    )
-                else:
-                    screen.blit(
-                        self.images[piece], (self.get_x(file), self.get_y(rank))
-                    )
+            if piece and pos != self.held_piece:
+                screen.blit(self.images[piece], (self.get_x(file), self.get_y(rank)))
 
             # draw a circle if the held piece can move to that square
             if pos in attack_moves:
@@ -135,6 +124,17 @@ class Game(DrawnObject):
                 x = self.get_x(file + 0.5) - radius
                 y = self.get_y(rank + 0.5) - radius
                 screen.blit(surface, (x, y))
+
+        # if holding a piece
+        if self.held_piece:
+            piece = self.board.board[self.held_piece]
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            # draw the held piece adjusted for mouse offset
+            screen.blit(
+                self.images[piece],
+                (mouse_x - self.x_offset, mouse_y - self.y_offset),
+            )
 
         # draw board outline
         pygame.draw.rect(
