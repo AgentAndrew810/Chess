@@ -1,7 +1,7 @@
 import pygame
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, FEN
+from constants import BLUE, WHITE, PINK, FEN
 
 
 class Game(DrawnObject):
@@ -70,6 +70,8 @@ class Game(DrawnObject):
                     pass
 
     def draw(self, screen: pygame.surface.Surface) -> None:
+        screen.fill((75, 100, 145))
+
         # draw the checkerboard
         for rank in range(8):
             for file in range(8):
@@ -87,6 +89,11 @@ class Game(DrawnObject):
                         self.square_size,
                     ),
                 )
+
+        # get all the attacked positions
+        attack_moves = [
+            move.new_pos for move in self.next_moves if move.old_pos == self.held_piece
+        ]
 
         for pos in range(64):
             # flip rank and file if playing as black
@@ -107,6 +114,35 @@ class Game(DrawnObject):
                     screen.blit(
                         self.images[piece], (self.get_x(file), self.get_y(rank))
                     )
+
+            # draw a circle if the held piece can move to that square
+            if pos in attack_moves:
+                # determine the radius and width based on if its attacking a piece
+                if piece:
+                    # circle outline on piece
+                    radius = round(self.square_size / 2.5)
+                    width = self.square_size // 14
+                else:
+                    # dot on square
+                    radius = self.square_size // 6
+                    width = 0
+
+                # create a surface and draw the circle on it
+                surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+                pygame.draw.circle(surface, PINK, (radius, radius), radius, width)
+
+                # draw the surface onto the screen
+                x = self.get_x(file + 0.5) - radius
+                y = self.get_y(rank + 0.5) - radius
+                screen.blit(surface, (x, y))
+
+        # draw board outline
+        pygame.draw.rect(
+            screen,
+            (0, 0, 0),
+            (self.x_padd, self.y_padd, self.board_size, self.board_size),
+            3,
+        )
 
     def load_images(self) -> None:
         # load each piece where the key is the char stored in the board
