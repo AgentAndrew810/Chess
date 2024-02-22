@@ -30,7 +30,7 @@ def main() -> None:
                 width = max(event.size[0], MIN_WIDTH)
                 height = max(event.size[1], MIN_HEIGHT)
 
-                # adjust the screen and reset the sizes in the objects
+                # adjust the screen and reset the sizes in each object
                 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
                 DrawnObject.set_sizes(width, height)
 
