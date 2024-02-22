@@ -19,6 +19,10 @@ class Game(DrawnObject):
     def update(self) -> None:
         self.load_images()
 
+    @property
+    def player_to_move(self) -> bool:
+        return self.board.white_to_move == self.player_is_white
+
     def get_x(self, file: int) -> int:
         return self.x_padd + self.square_size * file
 
@@ -32,6 +36,21 @@ class Game(DrawnObject):
             return (rank, file)
         else:
             return (7 - rank, 7 - file)
+
+    def grab_piece(self, x: int, y: int) -> None:
+        # get the rank and file grabbed and their offsets
+        rank, self.y_offset = divmod(y - self.y_padd, self.square_size)
+        file, self.x_offset = divmod(x - self.x_padd, self.square_size)
+
+        # flip rank and file if playing as black
+        rank, file = self.flip_coordinates(rank, file)
+        piece = self.board.board[rank][file]
+
+        # check if grabbing the correct colour
+        if (piece.isupper() and self.board.white_to_move) or (
+            piece.islower() and not self.board.white_to_move
+        ):
+            self.held_piece = (rank, file)
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         # draw the checkerboard
@@ -53,9 +72,9 @@ class Game(DrawnObject):
                 )
 
         for pos in range(64):
-            # get the rank and file and flip if playing as black
-            piece = self.board.board[pos]
+            # flip rank and file if playing as black
             rank, file = self.flip_coordinates(pos // 8, pos % 8)
+            piece = self.board.board[pos]
 
             # draw the piece
             if piece is not None:
