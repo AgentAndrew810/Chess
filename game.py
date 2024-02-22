@@ -7,14 +7,14 @@ from constants import BLUE, WHITE, FEN
 class Game(DrawnObject):
     def __init__(self) -> None:
         super().__init__()
-
-        print(self.__dict__)
-
         self.load_images()
 
-        self.board = Board.from_fen(FEN)
         self.active = True
-        self.player_is_white = False
+        self.player_is_white = True
+        self.held_piece = None
+
+        self.board = Board.from_fen(FEN)
+        self.next_moves = self.board.get_moves()
 
     def update(self) -> None:
         self.load_images()
@@ -44,13 +44,30 @@ class Game(DrawnObject):
 
         # flip rank and file if playing as black
         rank, file = self.flip_coordinates(rank, file)
-        piece = self.board.board[rank][file]
+        piece = self.board.board[rank * 8 + file]
 
         # check if grabbing the correct colour
         if (piece.isupper() and self.board.white_to_move) or (
             piece.islower() and not self.board.white_to_move
         ):
-            self.held_piece = (rank, file)
+            self.held_piece = rank * 8 + file
+
+    def drop_piece(self, x: int, y: int) -> None:
+        # get the rank and file
+        rank = (y - self.y_padd) // self.square_size
+        file = (x - self.x_padd) // self.square_size
+
+        # flip rank and file if playing as black
+        rank, file = self.flip_coordinates(rank, file)
+
+        self.held_piece = None
+
+        # if the move is a valid move
+        for move in self.next_moves:
+            if move.old_pos == self.held_piece:
+                if rank * 8 + file == move.new_pos:
+                    # make move logic here
+                    pass
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         # draw the checkerboard
@@ -77,8 +94,19 @@ class Game(DrawnObject):
             piece = self.board.board[pos]
 
             # draw the piece
-            if piece is not None:
-                screen.blit(self.images[piece], (self.get_x(file), self.get_y(rank)))
+            if piece:
+                # if the current piece is the held piece
+                if pos == self.held_piece:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    # draw the held piece adjusted for mouse offset
+                    screen.blit(
+                        self.images[piece],
+                        (mouse_x - self.x_offset, mouse_y - self.y_offset),
+                    )
+                else:
+                    screen.blit(
+                        self.images[piece], (self.get_x(file), self.get_y(rank))
+                    )
 
     def load_images(self) -> None:
         # load each piece where the key is the char stored in the board
