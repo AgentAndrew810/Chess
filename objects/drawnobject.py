@@ -18,7 +18,7 @@ class DrawnObject:
         # use the height and width to calculate other sizes
         cls.padd = round(width / 21)
         cls.square_size = cls.padd * 2
-        cls.board_size = cls.square_size * 9
+        cls.board_size = cls.square_size * 8
 
         # calculate the x_padd and y_padd based on if the height or width was adjusted
         cls.x_padd = cls.padd + (screen_width - width) // 2
