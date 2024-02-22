@@ -8,6 +8,6 @@ MIN_HEIGHT = 360
 
 BLUE = (121, 156, 178)
 WHITE = (212, 223, 229)
-PINK = (255, 145, 220, 100)
+PINK = (255, 145, 220, 150)
 
 FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
