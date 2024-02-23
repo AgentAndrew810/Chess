@@ -42,24 +42,24 @@ class Board:
         white_to_move = not self.white_to_move
         return Board(new_board, white_to_move)
 
-    def can_move(self, rank: int, file: int, can_attack: bool) -> bool:
-        # if the position is not on the board
-        if 0 <= rank <= 7 and 0 <= file <= 7:
-            piece = self.board[rank][file]
+    def can_move(
+        self, rank: int, file: int, can_attack: bool, must_attack: bool = False
+    ) -> bool:
+        # check if the position is not on the board
+        if not (0 <= rank <= 7 and 0 <= file <= 7):
+            return False  # position is off the board
 
-            # if there is no piece return True
-            if not piece:
-                return True
+        piece = self.board[rank][file]
 
-            # if the piece is allowed to attack
-            if can_attack:
-                # return false if the piece on the square is of the same color
-                return self.white_to_move != piece.isupper()
-            else:
-                # otherwise piece cannot move there
-                return False
+        # if there is no piece there
+        if not piece:
+            # return false if must_attack, otherwise true
+            return not must_attack
 
-        # if the position is off the board, the piece cannot move there
+        if can_attack or must_attack:
+            # return true if the piece on the square is a different colour
+            return self.white_to_move != piece.isupper()
+
         return False
 
     def get_moves(self) -> list[Move]:
@@ -82,14 +82,22 @@ class Board:
                     first_rank = 6 if self.white_to_move else 1
                     offset = -1 if self.white_to_move else 1
 
-                    # if on board and no piece is on square, move one square up
+                    # move one square up
                     if self.can_move(rank + offset, file, False):
                         moves.append(Move(rank, file, rank + offset, file))
 
-                        # if also on the first rank and no piece is on square, move two squares up
+                        # if on first rank, move two squares up
                         if rank == first_rank:
                             if self.can_move(rank + offset * 2, file, False):
                                 moves.append(Move(rank, file, rank + offset * 2, file))
+
+                    # diagonal attack left
+                    if self.can_move(rank + offset, file - 1, True, True):
+                        moves.append(Move(rank, file, rank + offset, file - 1))
+
+                    # diagonal attack right
+                    if self.can_move(rank + offset, file + 1, True, True):
+                        moves.append(Move(rank, file, rank + offset, file + 1))
 
                 elif piece.upper() == "N":  # knight
                     moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
