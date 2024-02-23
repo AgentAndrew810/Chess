@@ -1,6 +1,6 @@
 from __future__ import annotations
 from objects.move import Move
-from constants import KNIGHT_OFFSETS, C_OFFSETS, D_OFFSETS
+from constants import K_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
@@ -92,9 +92,7 @@ class Board:
                                 moves.append(Move(rank, file, rank + offset * 2, file))
 
                 elif piece.upper() == "N":  # knight
-                    moves.extend(
-                        self.get_piece_moves(rank, file, KNIGHT_OFFSETS, False)
-                    )
+                    moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
 
                 elif piece.upper() == "K":  # king
                     moves.extend(

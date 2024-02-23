@@ -12,7 +12,7 @@ WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
 
 # all knight move offsets
-KNIGHT_OFFSETS = (
+K_OFFSETS = (
     (2, 1),
     (2, -1),
     (-2, 1),
