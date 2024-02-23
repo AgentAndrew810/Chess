@@ -126,7 +126,7 @@ class Game(DrawnObject):
                 screen.blit(surface, (x, y))
 
         # if holding a piece
-        if self.held_piece:
+        if self.held_piece is not None:
             piece = self.board.board[self.held_piece]
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
