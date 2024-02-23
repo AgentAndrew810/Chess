@@ -11,14 +11,13 @@ BLUE = (121, 156, 178)
 WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
 
-# all knight move offsets
+# the offsets for knights, cardinal, and diagonal moves
 K_OFFSETS = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)]
-
-# all cardinal move offsets
 C_OFFSETS = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-
-# all diagonal move offsets
 D_OFFSETS = [(-1, -1), (1, 1), (-1, 1), (1, -1)]
+
+# the value of pieces
+PIECE_VALUES = {"P": 1, "B": 3, "N": 3, "R": 5, "Q": 9, "K": 1000}
 
 # starting position fen
 FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
