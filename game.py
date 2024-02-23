@@ -45,8 +45,9 @@ class Game(DrawnObject):
     def grab_piece(self, x: int, y: int) -> None:
         # check if the mouse is outside the board
         if not (self.x_padd < x < self.x_padd + self.board_size):
-            if not (self.y_padd < y < self.y_padd + self.board_size):
-                return
+            return
+        if not (self.y_padd < y < self.y_padd + self.board_size):
+            return
 
         # get the rank and file grabbed and their offsets
         rank, self.y_offset = divmod(y - self.y_padd, self.square_size)
