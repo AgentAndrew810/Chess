@@ -3,7 +3,7 @@ import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, PINK, YELLOW, BLACK, FEN
+from constants import BLUE, WHITE, PINK, YELLOW, DARK_YELLOW, BLACK, FEN
 
 
 class Game(DrawnObject):
@@ -84,7 +84,7 @@ class Game(DrawnObject):
         move = self.engine.search(self.board)
         self.board = self.board.make_move(move)
         self.next_moves = self.board.get_moves()
-        print(f"Time to make Move: {round(time.time()-t, 2)}s")
+        print(f"Time to make Move: {round(time.time()-t, 4)}s")
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         screen.fill((75, 100, 145))
@@ -94,6 +94,14 @@ class Game(DrawnObject):
             for file in range(8):
                 # determine colour of square based on if the sum of the rank and file is even or odd
                 colour = WHITE if (rank + file) % 2 == 0 else BLUE
+
+                # highlight squares part of the last move
+                last_move = self.board.last_move
+                if last_move:
+                    if (rank, file) == last_move.old_pos:
+                        colour = DARK_YELLOW
+                    elif (rank, file) == last_move.new_pos:
+                        colour = YELLOW
 
                 # draw the square
                 pygame.draw.rect(
