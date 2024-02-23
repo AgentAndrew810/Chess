@@ -61,7 +61,7 @@ class Board:
             if self.white_to_move != piece.isupper():
                 continue
 
-            if piece.upper() == "P":
+            if piece.upper() == "P":  # pawn
                 first_rank = 6 if self.white_to_move else 1
                 offset = -8 if self.white_to_move else 8
 
@@ -75,7 +75,7 @@ class Board:
                             if not self.piece_on_square(pos + offset * 2, True):
                                 moves.append(Move(pos, pos + offset * 2))
 
-            elif piece.upper() == "N":
+            elif piece.upper() == "N":  # knight
                 for offset in KNIGHT_OFFSETS:
                     # get the new rank and file based on the offset
                     new_rank, new_file = rank + offset[0], file + offset[1]
@@ -86,16 +86,16 @@ class Board:
                         if not self.piece_on_square(new_pos):
                             moves.append(Move(pos, new_pos))
 
-            elif piece.upper() == "K":
+            elif piece.upper() == "K":  # king
                 moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, False))
 
-            elif piece.upper() == "B":
+            elif piece.upper() == "B":  # bishop
                 moves.extend(self.get_piece_moves(pos, D_OFFSETS, True))
 
-            elif piece.upper() == "R":
+            elif piece.upper() == "R":  # rook
                 moves.extend(self.get_piece_moves(pos, C_OFFSETS, True))
 
-            elif piece.upper() == "Q":
+            elif piece.upper() == "Q":  # queen
                 moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, True))
 
         return moves
