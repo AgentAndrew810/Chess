@@ -3,7 +3,7 @@ import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, PINK, BLACK, FEN
+from constants import BLUE, WHITE, PINK, YELLOW, BLACK, FEN
 
 
 class Game(DrawnObject):
@@ -128,7 +128,7 @@ class Game(DrawnObject):
                     if piece:
                         # circle outline on piece
                         radius = round(self.square_size / 2.5)
-                        width = self.square_size // 14
+                        width = self.line_size
                     else:
                         # dot on square
                         radius = self.square_size // 6
