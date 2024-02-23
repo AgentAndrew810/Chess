@@ -43,6 +43,9 @@ def main() -> None:
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     game.drop_piece(*event.pos)
 
+            else:
+                game.make_computer_move()
+
         # draw everything to the screen
         game.draw(screen)
         pygame.display.flip()
