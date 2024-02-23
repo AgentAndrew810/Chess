@@ -107,7 +107,7 @@ class Board:
                         moves.append(Move(rank, file, rank + offset, file + 1))
 
                 elif piece.upper() == "N":  # knight
-                    moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, True))
+                    moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
 
                 elif piece.upper() == "K":  # king
                     moves.extend(
