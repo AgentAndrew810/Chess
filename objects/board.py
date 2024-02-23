@@ -4,125 +4,139 @@ from constants import KNIGHT_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
-    def __init__(self, board: list[str]) -> None:
+    def __init__(self, board: list[list[str]], white_to_move: bool) -> None:
         self.board = board
-        self.white_to_move = True
+        self.white_to_move = white_to_move
 
     @classmethod
-    def from_fen(cls, fen: str) -> Board:
-        board = [""] * 64
-        index = 0
+    def from_fen(cls, FEN: str) -> Board:
+        board = [["" for _ in range(8)] for _ in range(8)]
+        rank = 0
+        file = 0
 
-        for char in fen:
-            if char.isdigit():
-                index += int(char)
-            elif char == "/":
-                continue
+        for char in FEN:
+            if char == "/":
+                rank += 1
+                file = 0
+            elif char.isdigit():
+                file += int(char)
+            elif char == ".":
+                file += 1
             else:
-                board[index] = char
-                index += 1
+                board[rank][file] = char
+                file += 1
 
-        return Board(board)
+        return Board(board, True)
 
-    def on_board(self, pos: int) -> bool:
-        if pos >= 0 and pos <= 63:
-            return True
-        else:
-            return False
+    def make_move(self, move: Move) -> Board:
+        # copy the board
+        new_board = [rank.copy() for rank in self.board]
 
-    def piece_on_square(self, pos: int, inclue_enemy: bool = False) -> bool:
-        piece = self.board[pos]
-        # if there is a piece on that square
-        if piece:
-            # if including enemy pieces, then return true
-            if inclue_enemy:
+        # move the piece
+        new_board[move.new_rank][move.new_file] = new_board[move.old_rank][
+            move.old_file
+        ]
+        new_board[move.old_rank][move.old_file] = ""
+
+        # update additional information
+        white_to_move = not self.white_to_move
+        return Board(new_board, white_to_move)
+
+    def can_move(self, rank: int, file: int, can_attack: bool) -> bool:
+        # if the position is not on the board
+        if 0 <= rank <= 7 and 0 <= file <= 7:
+            piece = self.board[rank][file]
+
+            # if there is no piece return True
+            if not piece:
                 return True
-            else:
-                # otherwise, only return true if the piece is the player to move's piece
-                if self.white_to_move == piece.isupper():
-                    return True
 
+            # if the piece is allowed to attack
+            if can_attack:
+                # return false if the piece on the square is of the same color
+                return self.white_to_move != piece.isupper()
+            else:
+                # otherwise piece cannot move there
+                return False
+
+        # if the position is off the board, the piece cannot move there
         return False
 
     def get_moves(self) -> list[Move]:
         moves = []
 
-        for pos in range(64):
-            # get the piece rank and file
-            piece = self.board[pos]
-            rank = pos // 8
-            file = pos % 8
+        for rank in range(8):
+            for file in range(8):
+                # get the piece
+                piece = self.board[rank][file]
 
-            # if there isn't a piece
-            if not piece:
-                continue
+                # if there isn't a piece
+                if not piece:
+                    continue
 
-            # if the piece's colour is not the player to move
-            if self.white_to_move != piece.isupper():
-                continue
+                # if the piece's colour is not the player to move
+                if self.white_to_move != piece.isupper():
+                    continue
 
-            if piece.upper() == "P":  # pawn
-                first_rank = 6 if self.white_to_move else 1
-                offset = -8 if self.white_to_move else 8
+                if piece.upper() == "P":  # pawn
+                    first_rank = 6 if self.white_to_move else 1
+                    offset = -1 if self.white_to_move else 1
 
-                # if on board and no piece is on square, move one square up
-                if self.on_board(pos + offset):
-                    if not self.piece_on_square(pos + offset, True):
-                        moves.append(Move(pos, pos + offset))
+                    # if on board and no piece is on square, move one square up
+                    if self.can_move(rank + offset, file, False):
+                        moves.append(Move(rank, file, rank + offset, file))
 
                         # if also on the first rank and no piece is on square, move two squares up
                         if rank == first_rank:
-                            if not self.piece_on_square(pos + offset * 2, True):
-                                moves.append(Move(pos, pos + offset * 2))
+                            if self.can_move(rank + offset * 2, file, False):
+                                moves.append(Move(rank, file, rank + offset * 2, file))
 
-            elif piece.upper() == "N":  # knight
-                for offset in KNIGHT_OFFSETS:
-                    # get the new rank and file based on the offset
-                    new_rank, new_file = rank + offset[0], file + offset[1]
-                    new_pos = new_rank * 8 + new_file
+                elif piece.upper() == "N":  # knight
+                    moves.extend(
+                        self.get_piece_moves(rank, file, KNIGHT_OFFSETS, False)
+                    )
 
-                    # if the space is available add move
-                    if 0 <= new_rank <= 7 and 0 <= new_file <= 7:
-                        if not self.piece_on_square(new_pos):
-                            moves.append(Move(pos, new_pos))
+                elif piece.upper() == "K":  # king
+                    moves.extend(
+                        self.get_piece_moves(rank, file, C_OFFSETS + D_OFFSETS, False)
+                    )
 
-            elif piece.upper() == "K":  # king
-                moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, False))
+                elif piece.upper() == "B":  # bishop
+                    moves.extend(self.get_piece_moves(rank, file, D_OFFSETS, True))
 
-            elif piece.upper() == "B":  # bishop
-                moves.extend(self.get_piece_moves(pos, D_OFFSETS, True))
+                elif piece.upper() == "R":  # rook
+                    moves.extend(self.get_piece_moves(rank, file, C_OFFSETS, True))
 
-            elif piece.upper() == "R":  # rook
-                moves.extend(self.get_piece_moves(pos, C_OFFSETS, True))
-
-            elif piece.upper() == "Q":  # queen
-                moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, True))
+                elif piece.upper() == "Q":  # queen
+                    moves.extend(
+                        self.get_piece_moves(rank, file, C_OFFSETS + D_OFFSETS, True)
+                    )
 
         return moves
 
     def get_piece_moves(
-        self, pos: int, C_OFFSETS: list[int], sliding: bool
+        self, rank: int, file: int, offsets: list[tuple[int, int]], sliding: bool
     ) -> list[Move]:
         moves = []
 
-        for offset in C_OFFSETS:
-            # set the initial position to adding the move
-            new_pos = pos + offset
+        for offset in offsets:
+            # set the initial position to adding the offset
+            new_rank, new_file = rank + offset[0], file + offset[1]
 
             if sliding:
-                # if the piece can slide continue adding the move while it can
-                while self.on_board(new_pos) and not self.piece_on_square(new_pos):
-                    moves.append(Move(pos, new_pos))
+                # if the piece can slide, continue adding the move while it can
+                while self.can_move(new_rank, new_file, True):
+                    moves.append(Move(rank, file, new_rank, new_file))
 
                     # if you hit a piece exit loop
-                    if self.piece_on_square(new_pos, True):
+                    if self.board[new_rank][new_file]:
                         break
 
                     # add new offset
-                    new_pos += offset
+                    new_rank, new_file = new_rank + offset[0], new_file + offset[1]
             else:
                 # add the normal move
-                if self.on_board(new_pos) and not self.piece_on_square(new_pos):
-                    moves.append(Move(pos, new_pos))
+                if self.can_move(new_rank, new_file, True):
+                    moves.append(Move(rank, file, new_rank, new_file))
 
         return moves
