@@ -6,8 +6,10 @@ SCREEN_HEIGHT = 720
 MIN_WIDTH = 420
 MIN_HEIGHT = 360
 
+# colours
 BLUE = (121, 156, 178)
 WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
 
+# starting position fen
 FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
