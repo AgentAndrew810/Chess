@@ -27,9 +27,11 @@ class Game(DrawnObject):
         return self.board.white_to_move == self.player_is_white
 
     def get_x(self, file: int) -> int:
+        _, file = self.flip_coordinates(0, file)
         return self.x_padd + self.square_size * file
 
     def get_y(self, rank: int) -> int:
+        rank, _ = self.flip_coordinates(rank, 0)
         return self.y_padd + self.square_size * rank
 
     def flip_coordinates(self, rank: int, file: int) -> tuple[int, int]:
@@ -41,6 +43,11 @@ class Game(DrawnObject):
             return (7 - rank, 7 - file)
 
     def grab_piece(self, x: int, y: int) -> None:
+        # check if the mouse is outside the board
+        if not (self.x_padd < x < self.x_padd + self.board_size):
+            if not (self.y_padd < y < self.y_padd + self.board_size):
+                return
+
         # get the rank and file grabbed and their offsets
         rank, self.y_offset = divmod(y - self.y_padd, self.square_size)
         file, self.x_offset = divmod(x - self.x_padd, self.square_size)
@@ -106,8 +113,6 @@ class Game(DrawnObject):
 
         for rank in range(8):
             for file in range(8):
-                # flip rank and file if playing as black
-                rank, file = self.flip_coordinates(rank, file)
                 piece = self.board.board[rank][file]
 
                 # draw the piece
@@ -133,8 +138,8 @@ class Game(DrawnObject):
                     pygame.draw.circle(surface, PINK, (radius, radius), radius, width)
 
                     # draw the surface onto the screen
-                    x = self.get_x(file + 0.5) - radius
-                    y = self.get_y(rank + 0.5) - radius
+                    x = self.get_x(file) + 0.5 * self.square_size - radius
+                    y = self.get_y(rank) + 0.5 * self.square_size - radius
                     screen.blit(surface, (x, y))
 
         # if holding a piece
