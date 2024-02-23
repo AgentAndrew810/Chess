@@ -3,7 +3,7 @@ import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, PINK, FEN
+from constants import BLUE, WHITE, PINK, BLACK, FEN
 
 
 class Game(DrawnObject):
@@ -157,7 +157,7 @@ class Game(DrawnObject):
         # draw board outline
         pygame.draw.rect(
             screen,
-            (0, 0, 0),
+            BLACK,
             (self.x_padd, self.y_padd, self.board_size, self.board_size),
             3,
         )

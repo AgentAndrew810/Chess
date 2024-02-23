@@ -10,6 +10,7 @@ MIN_HEIGHT = 360
 BLUE = (121, 156, 178)
 WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
+BLACK = (0, 0, 0)
 
 # the offsets for knights, cardinal, and diagonal moves
 K_OFFSETS = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)]
