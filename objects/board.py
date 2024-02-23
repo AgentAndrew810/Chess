@@ -31,6 +31,36 @@ class Board:
 
         return Board(board, True, None)
 
+    def can_attack_king(self) -> bool:
+        # get the location of the king
+        for rank in range(8):
+            for file in range(8):
+                piece = self.board[rank][file]
+                # if white to move find black king
+                if self.white_to_move and piece == "k":
+                    king = (rank, file)
+                # if black to move find white king
+                elif not self.white_to_move and piece == "K":
+                    king = (rank, file)
+
+        # if has a move attacking king, return true
+        for move in self.get_moves():
+            if move.new_pos == king:
+                return True
+
+        return False
+
+    def get_legal_moves(self) -> list[Move]:
+        moves = []
+
+        for move in self.get_moves():
+            new_board = self.make_move(move)
+
+            if not new_board.can_attack_king():
+                moves.append(move)
+
+        return moves
+
     def make_move(self, move: Move) -> Board:
         # copy the board and get piece
         new_board = [rank.copy() for rank in self.board]
