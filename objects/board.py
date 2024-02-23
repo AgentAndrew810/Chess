@@ -4,9 +4,12 @@ from constants import K_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
-    def __init__(self, board: list[list[str]], white_to_move: bool) -> None:
+    def __init__(
+        self, board: list[list[str]], white_to_move: bool, last_move: Move | None
+    ) -> None:
         self.board = board
         self.white_to_move = white_to_move
+        self.last_move = last_move
 
     @classmethod
     def from_fen(cls, FEN: str) -> Board:
@@ -26,7 +29,7 @@ class Board:
                 board[rank][file] = char
                 file += 1
 
-        return Board(board, True)
+        return Board(board, True, None)
 
     def make_move(self, move: Move) -> Board:
         # copy the board and get piece
@@ -47,7 +50,7 @@ class Board:
 
         # update additional information
         white_to_move = not self.white_to_move
-        return Board(new_board, white_to_move)
+        return Board(new_board, white_to_move, move)
 
     def can_move(
         self, rank: int, file: int, can_attack: bool, must_attack: bool = False
