@@ -12,23 +12,14 @@ WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
 
 # all knight move offsets
-K_OFFSETS = (
-    (2, 1),
-    (2, -1),
-    (-2, 1),
-    (-2, -1),
-    (1, 2),
-    (1, -2),
-    (-1, 2),
-    (-1, -2),
-)
+K_OFFSETS = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)]
 
 # all cardinal move offsets
-C_OFFSETS = ((0, -1), (0, 1), (-1, 0), (1, 0))
+C_OFFSETS = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
 # all diagonal move offsets
-D_OFFSETS = ((-1, -1), (1, 1), (-1, 1), (1, -1))
+D_OFFSETS = [(-1, -1), (1, 1), (-1, 1), (1, -1)]
 
 # starting position fen
 FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-FEN = "r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1"
+# FEN = "r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1"
