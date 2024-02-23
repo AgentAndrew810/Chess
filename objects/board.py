@@ -1,6 +1,6 @@
 from __future__ import annotations
 from objects.move import Move
-from constants import KNIGHT_OFFSETS, STRAIGHT_OFFSETS, DIAGONAL_OFFSETS
+from constants import KNIGHT_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
@@ -58,59 +58,54 @@ class Board:
                 continue
 
             # if the piece's colour is not the player to move
-            elif self.white_to_move != piece.isupper():
+            if self.white_to_move != piece.isupper():
                 continue
 
             if piece.upper() == "P":
                 first_rank = 6 if self.white_to_move else 1
-                direction = -8 if self.white_to_move else 8
+                offset = -8 if self.white_to_move else 8
 
                 # if on board and no piece is on square, move one square up
-                if self.on_board(pos + direction):
-                    if not self.piece_on_square(pos + direction, True):
-                        moves.append(Move(pos, pos + direction))
+                if self.on_board(pos + offset):
+                    if not self.piece_on_square(pos + offset, True):
+                        moves.append(Move(pos, pos + offset))
 
                         # if also on the first rank and no piece is on square, move two squares up
                         if rank == first_rank:
-                            if not self.piece_on_square(pos + direction * 2, True):
-                                moves.append(Move(pos, pos + direction * 2))
+                            if not self.piece_on_square(pos + offset * 2, True):
+                                moves.append(Move(pos, pos + offset * 2))
 
             elif piece.upper() == "N":
-                for direction in KNIGHT_OFFSETS:
-                    # get the new rank and file based on the direction
-                    new_rank, new_file = rank + direction[0], file + direction[1]
+                for offset in KNIGHT_OFFSETS:
+                    # get the new rank and file based on the offset
+                    new_rank, new_file = rank + offset[0], file + offset[1]
                     new_pos = new_rank * 8 + new_file
 
+                    # if the space is available add move
                     if 0 <= new_rank <= 7 and 0 <= new_file <= 7:
                         if not self.piece_on_square(new_pos):
                             moves.append(Move(pos, new_pos))
 
             elif piece.upper() == "K":
-                moves.extend(
-                    self.get_piece_moves(
-                        pos, STRAIGHT_OFFSETS + DIAGONAL_OFFSETS, False
-                    )
-                )
+                moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, False))
 
             elif piece.upper() == "B":
-                moves.extend(self.get_piece_moves(pos, DIAGONAL_OFFSETS, True))
+                moves.extend(self.get_piece_moves(pos, D_OFFSETS, True))
 
             elif piece.upper() == "R":
-                moves.extend(self.get_piece_moves(pos, STRAIGHT_OFFSETS, True))
+                moves.extend(self.get_piece_moves(pos, C_OFFSETS, True))
 
             elif piece.upper() == "Q":
-                moves.extend(
-                    self.get_piece_moves(pos, STRAIGHT_OFFSETS + DIAGONAL_OFFSETS, True)
-                )
+                moves.extend(self.get_piece_moves(pos, C_OFFSETS + D_OFFSETS, True))
 
         return moves
 
     def get_piece_moves(
-        self, pos: int, offsets: list[int], sliding: bool
+        self, pos: int, C_OFFSETS: list[int], sliding: bool
     ) -> list[Move]:
         moves = []
 
-        for offset in offsets:
+        for offset in C_OFFSETS:
             # set the initial position to adding the move
             new_pos = pos + offset
 
