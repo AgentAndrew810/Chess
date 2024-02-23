@@ -11,7 +11,7 @@ BLUE = (121, 156, 178)
 WHITE = (212, 223, 229)
 PINK = (255, 145, 220, 150)
 
-# all the moves the knight can make
+# all knight move offsets
 KNIGHT_OFFSETS = (
     (2, 1),
     (2, -1),
@@ -22,9 +22,13 @@ KNIGHT_OFFSETS = (
     (-1, 2),
     (-1, -2),
 )
-C_OFFSETS = (-8, -1, 1, 8)
-D_OFFSETS = (-9, -7, 7, 9)
+
+# all cardinal move offsets
+C_OFFSETS = ((0, -1), (0, 1), (-1, 0), (1, 0))
+
+# all diagonal move offsets
+D_OFFSETS = ((-1, -1), (1, 1), (-1, 1), (1, -1))
 
 # starting position fen
-# FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 FEN = "r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1"
