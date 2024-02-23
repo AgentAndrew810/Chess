@@ -1,4 +1,6 @@
 import pygame
+import time
+from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
 from constants import BLUE, WHITE, PINK, FEN
@@ -13,6 +15,7 @@ class Game(DrawnObject):
         self.player_is_white = True
         self.held_piece = None
 
+        self.engine = Engine()
         self.board = Board.from_fen(FEN)
         self.next_moves = self.board.get_moves()
 
@@ -44,13 +47,13 @@ class Game(DrawnObject):
 
         # flip rank and file if playing as black
         rank, file = self.flip_coordinates(rank, file)
-        piece = self.board.board[rank * 8 + file]
+        piece = self.board.board[rank][file]
 
         # check if grabbing the correct colour
         if (piece.isupper() and self.board.white_to_move) or (
             piece.islower() and not self.board.white_to_move
         ):
-            self.held_piece = rank * 8 + file
+            self.held_piece = (rank, file)
 
     def drop_piece(self, x: int, y: int) -> None:
         # get the rank and file
@@ -60,14 +63,20 @@ class Game(DrawnObject):
         # flip rank and file if playing as black
         rank, file = self.flip_coordinates(rank, file)
 
-        self.held_piece = None
-
         # if the move is a valid move
         for move in self.next_moves:
             if move.old_pos == self.held_piece:
-                if rank * 8 + file == move.new_pos:
-                    # make move logic here
-                    pass
+                if (rank, file) == move.new_pos:
+                    self.board = self.board.make_move(move)
+
+        self.held_piece = None
+
+    def make_computer_move(self) -> None:
+        t = time.time()
+        move = self.engine.search(self.board)
+        self.board = self.board.make_move(move)
+        self.next_moves = self.board.get_moves()
+        print(f"Time to make Move: {round(time.time()-t, 2)}s")
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         screen.fill((75, 100, 145))
@@ -95,45 +104,48 @@ class Game(DrawnObject):
             move.new_pos for move in self.next_moves if move.old_pos == self.held_piece
         ]
 
-        for pos in range(64):
-            # flip rank and file if playing as black
-            rank, file = self.flip_coordinates(pos // 8, pos % 8)
-            piece = self.board.board[pos]
+        for rank in range(8):
+            for file in range(8):
+                # flip rank and file if playing as black
+                rank, file = self.flip_coordinates(rank, file)
+                piece = self.board.board[rank][file]
 
-            # draw the piece
-            if piece and pos != self.held_piece:
-                screen.blit(self.images[piece], (self.get_x(file), self.get_y(rank)))
+                # draw the piece
+                if piece and (rank, file) != self.held_piece:
+                    screen.blit(
+                        self.images[piece], (self.get_x(file), self.get_y(rank))
+                    )
 
-            # draw a circle if the held piece can move to that square
-            if pos in attack_moves:
-                # determine the radius and width based on if its attacking a piece
-                if piece:
-                    # circle outline on piece
-                    radius = round(self.square_size / 2.5)
-                    width = self.square_size // 14
-                else:
-                    # dot on square
-                    radius = self.square_size // 6
-                    width = 0
+                # draw a circle if the held piece can move to that square
+                if (rank, file) in attack_moves:
+                    # determine the radius and width based on if its attacking a piece
+                    if piece:
+                        # circle outline on piece
+                        radius = round(self.square_size / 2.5)
+                        width = self.square_size // 14
+                    else:
+                        # dot on square
+                        radius = self.square_size // 6
+                        width = 0
 
-                # create a surface and draw the circle on it
-                surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-                pygame.draw.circle(surface, PINK, (radius, radius), radius, width)
+                    # create a surface and draw the circle on it
+                    surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+                    pygame.draw.circle(surface, PINK, (radius, radius), radius, width)
 
-                # draw the surface onto the screen
-                x = self.get_x(file + 0.5) - radius
-                y = self.get_y(rank + 0.5) - radius
-                screen.blit(surface, (x, y))
+                    # draw the surface onto the screen
+                    x = self.get_x(file + 0.5) - radius
+                    y = self.get_y(rank + 0.5) - radius
+                    screen.blit(surface, (x, y))
 
         # if holding a piece
         if self.held_piece is not None:
-            piece = self.board.board[self.held_piece]
+            rank, file = self.held_piece
+            piece = self.board.board[rank][file]
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
             # draw the held piece adjusted for mouse offset
             screen.blit(
-                self.images[piece],
-                (mouse_x - self.x_offset, mouse_y - self.y_offset),
+                self.images[piece], (mouse_x - self.x_offset, mouse_y - self.y_offset)
             )
 
         # draw board outline
