@@ -22,8 +22,8 @@ KNIGHT_OFFSETS = (
     (-1, 2),
     (-1, -2),
 )
-STRAIGHT_OFFSETS = (-8, -1, 1, 8)
-DIAGONAL_OFFSETS = (-9, -7, 7, 9)
+C_OFFSETS = (-8, -1, 1, 8)
+D_OFFSETS = (-9, -7, 7, 9)
 
 # starting position fen
 # FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
