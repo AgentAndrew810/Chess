@@ -29,13 +29,20 @@ class Board:
         return Board(board, True)
 
     def make_move(self, move: Move) -> Board:
-        # copy the board
+        # copy the board and get piece
         new_board = [rank.copy() for rank in self.board]
+        piece = self.board[move.old_rank][move.old_file]
+
+        # check if promotion
+        last_rank = 0 if self.white_to_move else 7
+        if move.new_rank == last_rank:
+            if piece == "p":
+                piece = "q"
+            elif piece == "P":
+                piece = "Q"
 
         # move the piece
-        new_board[move.new_rank][move.new_file] = new_board[move.old_rank][
-            move.old_file
-        ]
+        new_board[move.new_rank][move.new_file] = piece
         new_board[move.old_rank][move.old_file] = ""
 
         # update additional information
@@ -100,7 +107,7 @@ class Board:
                         moves.append(Move(rank, file, rank + offset, file + 1))
 
                 elif piece.upper() == "N":  # knight
-                    moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
+                    moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, True))
 
                 elif piece.upper() == "K":  # king
                     moves.extend(
