@@ -8,9 +8,9 @@ class Move:
         self.new_file = new_file
 
     @property
-    def old_pos(self) -> None:
+    def old_pos(self) -> tuple[int, int]:
         return (self.old_rank, self.old_file)
 
     @property
-    def new_pos(self) -> None:
+    def new_pos(self) -> tuple[int, int]:
         return (self.new_rank, self.new_file)
