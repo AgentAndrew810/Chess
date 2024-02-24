@@ -16,8 +16,17 @@ class Board:
             self.b_castle_k = True
             self.b_castle_q = True
 
+            for rank in range(8):
+                for file in range(8):
+                    piece = self.board[rank][file]
+
+                    if piece == "K":
+                        self.white_king = (rank, file)
+                    elif piece == "k":
+                        self.black_king = (rank, file)
+
     def can_attack_king(self) -> bool:
-        king_pos = self.find_king_position()
+        king_pos = self.black_king if self.white_to_move else self.white_king
 
         # if has a move attacking king, return true
         for move in self.get_moves():
@@ -25,17 +34,6 @@ class Board:
                 return True
 
         return False
-
-    def find_king_position(self) -> tuple[int, int]:
-        for rank in range(8):
-            for file in range(8):
-                piece = self.board[rank][file]
-                if (self.white_to_move and piece == "k") or (
-                    not self.white_to_move and piece == "K"
-                ):
-                    return rank, file
-
-        return -1, -1
 
     def get_legal_moves(self) -> list[Move]:
         moves = []
@@ -68,6 +66,14 @@ class Board:
         # update additional information
         board.white_to_move = not self.white_to_move
         board.last_move = move
+        board.white_king = self.white_king
+        board.black_king = self.black_king
+
+        # update king location if it moved
+        if piece == "K":
+            board.white_king = move.new_pos
+        elif piece == "k":
+            board.black_king = move.new_pos
 
         return board
 
