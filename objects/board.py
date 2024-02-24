@@ -11,7 +11,7 @@ class Board:
             rank = 0
             file = 0
 
-            for char in FEN:
+            for char in fen:
                 if char == "/":
                     rank += 1
                     file = 0
