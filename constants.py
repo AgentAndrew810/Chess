@@ -22,6 +22,14 @@ D_OFFSETS = [(-1, -1), (1, 1), (-1, 1), (1, -1)]
 # the value of pieces
 PIECE_VALUES = {"P": 1, "B": 3, "N": 3, "R": 5, "Q": 9, "K": 1000}
 
-# starting position fen
-FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-# FEN = "r1bk3r/p2pBpNp/n4n2/1p1NP2P/6P1/3P4/P1P1K3/q5b1"
+# starting chess position
+CHESS_POSITION = [
+    ["r", "n", "b", "q", "k", "b", "n", "r"],
+    ["p", "p", "p", "p", "p", "p", "p", "p"],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", "", ""],
+    ["P", "P", "P", "P", "P", "P", "P", "P"],
+    ["R", "N", "B", "Q", "K", "B", "N", "R"],
+]
