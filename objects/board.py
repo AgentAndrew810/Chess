@@ -9,7 +9,7 @@ class Board:
 
         if starter_options:
             # set additional options
-            self.white_to_move = False
+            self.white_to_move = True
             self.last_move = None
             self.w_castle_k = True
             self.w_castle_q = True
@@ -188,7 +188,7 @@ class Board:
                     )
 
                     # castling
-                    if piece == "K":
+                    if piece == "K" and (rank, file) == (7, 4):
                         if self.w_castle_k:
                             if not self.board[7][5] and not self.board[7][6]:
                                 moves.append(Move(rank, file, rank, file + 2))
@@ -201,7 +201,7 @@ class Board:
                             ):
                                 moves.append(Move(rank, file, rank, file - 2))
 
-                    else:
+                    elif piece == "k" and (rank, file) == (0, 4):
                         if self.b_castle_k:
                             if not self.board[0][5] and not self.board[0][6]:
                                 moves.append(Move(rank, file, rank, file + 2))
