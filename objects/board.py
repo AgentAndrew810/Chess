@@ -4,7 +4,7 @@ from constants import K_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
-    def __init__(self, fen: str | None) -> None:
+    def __init__(self, fen: str | None = None) -> None:
         if fen:
             # get the board from the fen
             self.board = [["" for _ in range(8)] for _ in range(8)]
