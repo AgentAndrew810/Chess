@@ -66,6 +66,13 @@ class Engine:
     def evaluate(self, board: Board) -> int:
         score = 0
 
+        # add or remove 100 points for being able to castle
+        if board.w_castle_k or board.w_castle_q:
+            score += 100
+
+        if board.b_castle_k or board.b_castle_q:
+            score -= 100
+
         for rank in range(8):
             for file in range(8):
                 piece = board.board[rank][file]
