@@ -8,7 +8,7 @@ class Engine:
         return
 
     def search(self, board: Board) -> Move | None:
-        _, move = self.minimax(board, 3, -100000, 100000)
+        _, move = self.minimax(board, 4, -100000, 100000)
 
         return move
 
