@@ -117,6 +117,14 @@ class Board:
                     first_rank = 6 if self.white_to_move else 1
                     offset = -1 if self.white_to_move else 1
 
+                    # diagonal attack left
+                    if self.can_move(rank + offset, file - 1, True, True):
+                        moves.append(Move(rank, file, rank + offset, file - 1))
+
+                    # diagonal attack right
+                    if self.can_move(rank + offset, file + 1, True, True):
+                        moves.append(Move(rank, file, rank + offset, file + 1))
+
                     # move one square up
                     if self.can_move(rank + offset, file, False):
                         moves.append(Move(rank, file, rank + offset, file))
@@ -125,14 +133,6 @@ class Board:
                         if rank == first_rank:
                             if self.can_move(rank + offset * 2, file, False):
                                 moves.append(Move(rank, file, rank + offset * 2, file))
-
-                    # diagonal attack left
-                    if self.can_move(rank + offset, file - 1, True, True):
-                        moves.append(Move(rank, file, rank + offset, file - 1))
-
-                    # diagonal attack right
-                    if self.can_move(rank + offset, file + 1, True, True):
-                        moves.append(Move(rank, file, rank + offset, file + 1))
 
                 elif piece.upper() == "N":  # knight
                     moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
