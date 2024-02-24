@@ -18,7 +18,7 @@ def main() -> None:
     game = Game()
 
     # main loop
-    while game.active:
+    while not game.is_over:
         for event in pygame.event.get():
             # if the user hits the x button quit the application
             if event.type == pygame.QUIT:
