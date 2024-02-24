@@ -9,7 +9,7 @@ class Engine:
         return
 
     def search(self, board: Board) -> Move:
-        return random.choice(board.get_moves())
+        return random.choice(board.get_legal_moves())
 
     def evaluate(self, board: Board) -> int:
         score = 0
