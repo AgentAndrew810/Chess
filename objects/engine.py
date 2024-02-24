@@ -1,6 +1,14 @@
 from objects.board import Board
 from objects.move import Move
-from constants import PIECE_VALUES
+from constants import (
+    PIECE_VALUES,
+    KNIGHTS_TABLE,
+    BISHOPS_TABLE,
+    ROOKS_TABLE,
+    QUEEN_TABLE,
+    KING_TABLE_WHITE,
+    KING_TABLE_BLACK,
+)
 
 
 class Engine:
@@ -8,7 +16,8 @@ class Engine:
         return
 
     def search(self, board: Board) -> Move | None:
-        _, move = self.minimax(board, 4, -100000, 100000)
+        _, move = self.minimax(board, 3, -1000000, 1000000)
+        print(_)
 
         return move
 
@@ -19,7 +28,7 @@ class Engine:
             return self.evaluate(board), None
 
         if board.white_to_move:
-            max_eval = -100000
+            max_eval = -1000000
             best_move = None
 
             for move in board.get_legal_moves():
@@ -37,7 +46,7 @@ class Engine:
             return max_eval, best_move
 
         else:
-            min_eval = 100000
+            min_eval = 1000000
             best_move = None
 
             for move in board.get_legal_moves():
@@ -61,11 +70,34 @@ class Engine:
             for file in range(8):
                 piece = board.board[rank][file]
 
-                # if the piece is white add the value, otherwise subtract the value
-                if piece.upper() in PIECE_VALUES:
-                    if piece.isupper():
-                        score += PIECE_VALUES[piece.upper()]
+                # skip blank squares
+                if not piece:
+                    continue
+
+                # get 1 if white, else -1
+                plus_minus = 1 if piece.isupper() else -1
+                piece = piece.upper()
+
+                # add or subtract the value of the piece
+                score += plus_minus * PIECE_VALUES[piece]
+
+                # add points based on position on board
+                if piece == "N":
+                    score += plus_minus * KNIGHTS_TABLE[rank][file]
+
+                elif piece == "B":
+                    score += plus_minus * BISHOPS_TABLE[rank][file]
+
+                elif piece == "R":
+                    score += plus_minus * ROOKS_TABLE[rank][file]
+
+                elif piece == "Q":
+                    score += plus_minus * QUEEN_TABLE[rank][file]
+
+                elif piece == "K":
+                    if plus_minus == 1:
+                        score += KING_TABLE_WHITE[rank][file]
                     else:
-                        score -= PIECE_VALUES[piece.upper()]
+                        score -= KING_TABLE_BLACK[rank][file]
 
         return score
