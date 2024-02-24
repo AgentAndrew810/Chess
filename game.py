@@ -11,7 +11,7 @@ class Game(DrawnObject):
         super().__init__()
         self.load_images()
 
-        self.active = True
+        self.is_over = False
         self.player_is_white = True
         self.held_piece = None
 
