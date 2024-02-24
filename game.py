@@ -3,7 +3,7 @@ import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, PINK, YELLOW, DARK_YELLOW, BLACK, FEN
+from constants import BLUE, WHITE, PINK, YELLOW, DARK_YELLOW, BLACK, CHESS_POSITION
 
 
 class Game(DrawnObject):
@@ -16,8 +16,8 @@ class Game(DrawnObject):
         self.held_piece = None
 
         self.engine = Engine()
-        self.board = Board(FEN)
-        self.next_moves = self.board.get_moves()
+        self.board = Board(CHESS_POSITION, True)
+        self.next_moves = self.board.get_legal_moves()
 
     def update(self) -> None:
         self.load_images()
@@ -76,15 +76,15 @@ class Game(DrawnObject):
             if move.old_pos == self.held_piece:
                 if (rank, file) == move.new_pos:
                     self.board = self.board.make_move(move)
-
         self.held_piece = None
 
     def make_computer_move(self) -> None:
         t = time.time()
         move = self.engine.search(self.board)
-        self.board = self.board.make_move(move)
-        self.next_moves = self.board.get_moves()
-        print(f"Time to make Move: {round(time.time()-t, 4)}s")
+        if move:
+            self.board = self.board.make_move(move)
+            self.next_moves = self.board.get_legal_moves()
+            print(f"Time to make Move: {round(time.time()-t, 4)}s")
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         screen.fill((75, 100, 145))
