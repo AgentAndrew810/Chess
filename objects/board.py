@@ -164,20 +164,15 @@ class Board:
             # set the initial position to adding the offset
             new_rank, new_file = rank + offset[0], file + offset[1]
 
-            if sliding:
-                # if the piece can slide, continue adding the move while it can
-                while self.can_move(new_rank, new_file, True):
-                    moves.append(Move(rank, file, new_rank, new_file))
+            # if the piece can slide, continue adding the move while it can
+            while self.can_move(new_rank, new_file, True):
+                moves.append(Move(rank, file, new_rank, new_file))
 
-                    # if you hit a piece exit loop
-                    if self.board[new_rank][new_file]:
-                        break
+                # if you hit a piece, or not a sliding piece, exit loop
+                if self.board[new_rank][new_file] or not sliding:
+                    break
 
-                    # add new offset
-                    new_rank, new_file = new_rank + offset[0], new_file + offset[1]
-            else:
-                # add the normal move
-                if self.can_move(new_rank, new_file, True):
-                    moves.append(Move(rank, file, new_rank, new_file))
+                # add new offset
+                new_rank, new_file = new_rank + offset[0], new_file + offset[1]
 
         return moves
