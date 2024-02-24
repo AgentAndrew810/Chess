@@ -18,14 +18,14 @@ def main() -> None:
     game = Game()
 
     # main loop
-    while not game.is_over:
+    while True:
         for event in pygame.event.get():
             # if the user hits the x button quit the application
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
 
-            elif event.type == pygame.VIDEORESIZE:
+            if event.type == pygame.VIDEORESIZE:
                 # choose the bigger option
                 width = max(event.size[0], MIN_WIDTH)
                 height = max(event.size[1], MIN_HEIGHT)
@@ -34,17 +34,18 @@ def main() -> None:
                 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
                 DrawnObject.set_sizes(width, height)
 
-            if game.player_to_move:
-                # if the players clicks down the mouse, grab the piece
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    game.grab_piece(*event.pos)
+            if not game.is_over:
+                if game.player_to_move:
+                    # if the players clicks down the mouse, grab the piece
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        game.grab_piece(*event.pos)
 
-                # if the player releases the mouse, drop the piece
-                if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                    game.drop_piece(*event.pos)
+                    # if the player releases the mouse, drop the piece
+                    if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                        game.drop_piece(*event.pos)
 
-            else:
-                game.make_computer_move()
+                else:
+                    game.make_computer_move()
 
         # draw everything to the screen
         game.draw(screen)
