@@ -4,47 +4,38 @@ from constants import K_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
-    def __init__(self, fen: str | None = None) -> None:
-        if fen:
-            # get the board from the fen
-            self.board = [["" for _ in range(8)] for _ in range(8)]
-            rank = 0
-            file = 0
+    def __init__(self, board: list[list[str]], starter_options: bool) -> None:
+        self.board = board
 
-            for char in fen:
-                if char == "/":
-                    rank += 1
-                    file = 0
-                elif char.isdigit():
-                    file += int(char)
-                elif char == ".":
-                    file += 1
-                else:
-                    self.board[rank][file] = char
-                    file += 1
-
+        if starter_options:
             # set additional options
             self.white_to_move = True
             self.last_move = None
+            self.w_castle_k = True
+            self.w_castle_q = True
+            self.b_castle_k = True
+            self.b_castle_q = True
 
     def can_attack_king(self) -> bool:
-        # get the location of the king
-        for rank in range(8):
-            for file in range(8):
-                piece = self.board[rank][file]
-                # if white to move find black king
-                if self.white_to_move and piece == "k":
-                    king = (rank, file)
-                # if black to move find white king
-                elif not self.white_to_move and piece == "K":
-                    king = (rank, file)
+        king_pos = self.find_king_position()
 
         # if has a move attacking king, return true
         for move in self.get_moves():
-            if move.new_pos == king:
+            if move.new_pos == king_pos:
                 return True
 
         return False
+
+    def find_king_position(self) -> tuple[int, int]:
+        for rank in range(8):
+            for file in range(8):
+                piece = self.board[rank][file]
+                if (self.white_to_move and piece == "k") or (
+                    not self.white_to_move and piece == "K"
+                ):
+                    return rank, file
+
+        return -1, -1
 
     def get_legal_moves(self) -> list[Move]:
         moves = []
@@ -59,10 +50,8 @@ class Board:
 
     def make_move(self, move: Move) -> Board:
         # create and copy board
-        board = Board()
-        board.board = [rank.copy() for rank in self.board]
-
-        piece = self.board[move.old_rank][move.old_file]
+        board = Board([rank.copy() for rank in self.board], False)
+        piece = board.board[move.old_rank][move.old_file]
 
         # check if promotion
         last_rank = 0 if self.white_to_move else 7
