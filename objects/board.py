@@ -4,32 +4,28 @@ from constants import K_OFFSETS, C_OFFSETS, D_OFFSETS
 
 
 class Board:
-    def __init__(
-        self, board: list[list[str]], white_to_move: bool, last_move: Move | None
-    ) -> None:
-        self.board = board
-        self.white_to_move = white_to_move
-        self.last_move = last_move
+    def __init__(self, fen: str | None) -> None:
+        if fen:
+            # get the board from the fen
+            self.board = [["" for _ in range(8)] for _ in range(8)]
+            rank = 0
+            file = 0
 
-    @classmethod
-    def from_fen(cls, FEN: str) -> Board:
-        board = [["" for _ in range(8)] for _ in range(8)]
-        rank = 0
-        file = 0
+            for char in FEN:
+                if char == "/":
+                    rank += 1
+                    file = 0
+                elif char.isdigit():
+                    file += int(char)
+                elif char == ".":
+                    file += 1
+                else:
+                    self.board[rank][file] = char
+                    file += 1
 
-        for char in FEN:
-            if char == "/":
-                rank += 1
-                file = 0
-            elif char.isdigit():
-                file += int(char)
-            elif char == ".":
-                file += 1
-            else:
-                board[rank][file] = char
-                file += 1
-
-        return Board(board, True, None)
+            # set additional options
+            self.white_to_move = True
+            self.last_move = None
 
     def can_attack_king(self) -> bool:
         # get the location of the king
@@ -62,8 +58,10 @@ class Board:
         return moves
 
     def make_move(self, move: Move) -> Board:
-        # copy the board and get piece
-        new_board = [rank.copy() for rank in self.board]
+        # create and copy board
+        board = Board()
+        board.board = [rank.copy() for rank in self.board]
+
         piece = self.board[move.old_rank][move.old_file]
 
         # check if promotion
@@ -75,12 +73,12 @@ class Board:
                 piece = "Q"
 
         # move the piece
-        new_board[move.new_rank][move.new_file] = piece
-        new_board[move.old_rank][move.old_file] = ""
+        board.board[move.new_rank][move.new_file] = piece
+        board.board[move.old_rank][move.old_file] = ""
 
         # update additional information
-        white_to_move = not self.white_to_move
-        return Board(new_board, white_to_move, move)
+        board.white_to_move = not self.white_to_move
+        return board
 
     def can_move(
         self, rank: int, file: int, can_attack: bool, must_attack: bool = False
