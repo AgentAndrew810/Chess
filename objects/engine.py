@@ -2,12 +2,15 @@ from objects.board import Board
 from objects.move import Move
 from constants import (
     PIECE_VALUES,
+    PAWN_TABLE_WHITE,
+    PAWN_TABLE_BLACK,
     KNIGHTS_TABLE,
     BISHOPS_TABLE,
     ROOKS_TABLE,
     QUEEN_TABLE,
     KING_TABLE_WHITE,
     KING_TABLE_BLACK,
+    INFINITY,
 )
 
 
@@ -16,8 +19,12 @@ class Engine:
         return
 
     def search(self, board: Board) -> Move | None:
-        _, move = self.minimax(board, 3, -1000000, 1000000)
-        print(_)
+        eval, move = self.minimax(board, 4, -INFINITY, INFINITY)
+
+        if eval > 0:
+            print(f"White is up {round(eval/100, 2)} pieces!")
+        else:
+            print(f"Black is up {round(-eval/100, 2)} pieces!")
 
         return move
 
@@ -28,7 +35,7 @@ class Engine:
             return self.evaluate(board), None
 
         if board.white_to_move:
-            max_eval = -1000000
+            max_eval = -INFINITY
             best_move = None
 
             for move in board.get_legal_moves():
@@ -46,7 +53,7 @@ class Engine:
             return max_eval, best_move
 
         else:
-            min_eval = 1000000
+            min_eval = INFINITY
             best_move = None
 
             for move in board.get_legal_moves():
@@ -89,7 +96,13 @@ class Engine:
                 score += plus_minus * PIECE_VALUES[piece]
 
                 # add points based on position on board
-                if piece == "N":
+                if piece == "P":
+                    if plus_minus == 1:
+                        score += PAWN_TABLE_WHITE[rank][file]
+                    else:
+                        score -= PAWN_TABLE_BLACK[rank][file]
+
+                elif piece == "N":
                     score += plus_minus * KNIGHTS_TABLE[rank][file]
 
                 elif piece == "B":
