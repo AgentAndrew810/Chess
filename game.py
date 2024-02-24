@@ -16,7 +16,7 @@ class Game(DrawnObject):
         self.held_piece = None
 
         self.engine = Engine()
-        self.board = Board.from_fen(FEN)
+        self.board = Board(FEN)
         self.next_moves = self.board.get_moves()
 
     def update(self) -> None:
