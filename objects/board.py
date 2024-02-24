@@ -78,6 +78,8 @@ class Board:
 
         # update additional information
         board.white_to_move = not self.white_to_move
+        board.last_move = move
+
         return board
 
     def can_move(
