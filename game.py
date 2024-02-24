@@ -3,7 +3,16 @@ import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
-from constants import BLUE, WHITE, PINK, YELLOW, DARK_YELLOW, BLACK, CHESS_POSITION
+from constants import (
+    BLUE,
+    WHITE,
+    PINK,
+    YELLOW,
+    DARK_YELLOW,
+    BLACK,
+    GREEN,
+    CHESS_POSITION,
+)
 
 
 class Game(DrawnObject):
@@ -85,6 +94,31 @@ class Game(DrawnObject):
             self.board = self.board.make_move(move)
             self.next_moves = self.board.get_legal_moves()
             print(f"Time to make Move: {round(time.time()-t, 4)}s")
+
+            if len(self.next_moves) == 0:
+                self.is_over = True
+                self.winner = "Computer"
+
+        else:
+            self.is_over = True
+            self.winner = "Player"
+
+    def draw_winner(self, screen: pygame.surface.Surface) -> None:
+        font = pygame.font.SysFont("arial", self.square_size, True)
+        text = f"{self.winner} Won!"
+
+        # get the width and height, and draw the text to a surface
+        width, height = font.size(text)
+        font_surf = font.render(text, True, GREEN)
+
+        # draw to screen
+        screen.blit(
+            font_surf,
+            (
+                self.x_padd + self.board_size // 2 - width // 2,
+                self.y_padd + self.board_size // 2 - height // 2,
+            ),
+        )
 
     def draw(self, screen: pygame.surface.Surface) -> None:
         screen.fill((75, 100, 145))
@@ -169,6 +203,10 @@ class Game(DrawnObject):
             (self.x_padd, self.y_padd, self.board_size, self.board_size),
             3,
         )
+
+        # draw the winner and if game over
+        if self.is_over:
+            return self.draw_winner(screen)
 
     def load_images(self) -> None:
         # load each piece where the key is the char stored in the board
