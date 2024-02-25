@@ -17,8 +17,7 @@ class Engine:
     def search(self, board: Board) -> Move | None:
         current_time = time.time()
 
-        eval, move = self.minimax(board, 3, -INFINITY, INFINITY)
-
+        eval, move = self.minimax(board, 4, -INFINITY, INFINITY)
         if eval > 0:
             print(f"White is up {round(eval/100, 2)} pieces!")
         else:
@@ -35,41 +34,40 @@ class Engine:
             return self.evaluate(board), None
 
         if board.white_to_move:
-            best_eval = -INFINITY
+            max_eval = -INFINITY
             best_move = None
 
             for move in board.get_legal_moves():
                 child = board.make_move(move)
-
                 eval = self.minimax(child, depth - 1, alpha, beta)[0]
 
-                if eval >= best_eval:
-                    best_eval = eval
+                if eval >= max_eval:
+                    max_eval = eval
                     best_move = move
 
                 alpha = max(alpha, eval)
                 if beta <= alpha:
                     break
 
+            return max_eval, best_move
+
         else:
-            best_eval = INFINITY
+            min_eval = INFINITY
             best_move = None
 
             for move in board.get_legal_moves():
                 child = board.make_move(move)
                 eval = self.minimax(child, depth - 1, alpha, beta)[0]
 
-                if eval <= best_eval:
-                    best_eval = eval
-                    best_move = Move(
-                        move.old_rank, move.old_file, move.new_rank, move.new_file
-                    )
+                if eval <= min_eval:
+                    min_eval = eval
+                    best_move = move
 
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
 
-        return best_eval, best_move
+        return min_eval, best_move
 
     def evaluate(self, board: Board) -> int:
         score = 0
