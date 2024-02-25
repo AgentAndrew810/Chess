@@ -39,10 +39,34 @@ class Board:
         moves = []
 
         for move in self.get_moves():
-            new_board = self.make_move(move)
+            if self.make_move(move).can_attack_king():
+                continue
 
-            if not new_board.can_attack_king():
-                moves.append(move)
+            if move.castling_type:
+                # create a board with the opponent to move
+                new_board = self.make_move(Move(0, 0, 0, 0))
+
+                # if the opponent can attack the king, skip move
+                # since you can't castle in check
+                if new_board.can_attack_king():
+                    continue
+
+                # create a board with the king doing the first move
+                if move.castling_type == "K":
+                    new_board = self.make_move(Move(7, 4, 7, 5))
+                elif move.castling_type == "Q":
+                    new_board = self.make_move(Move(7, 4, 7, 2))
+                elif move.castling_type == "k":
+                    new_board = self.make_move(Move(0, 4, 0, 6))
+                else:
+                    new_board = self.make_move(Move(0, 4, 0, 2))
+
+                # if the opponent can attack the king, skip move
+                # since you can't move through a check in castling
+                if new_board.can_attack_king():
+                    continue
+
+            moves.append(move)
 
         return moves
 
