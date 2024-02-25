@@ -14,10 +14,10 @@ class Engine:
             reversed_table = table[::-1]
             self.BLACK_PIECE_TABLES[piece.lower()] = reversed_table
 
-    def search(self, board: Board) -> Move | None:
+    def search(self, board: Board):
         current_time = time.time()
 
-        eval, move = self.minimax(board, 4, -INFINITY, INFINITY)
+        eval, move = self.minimax(board, 3)
         if eval > 0:
             print(f"White is up {round(eval/100, 2)} pieces!")
         else:
@@ -27,47 +27,37 @@ class Engine:
 
         return move
 
-    def minimax(
-        self, board: Board, depth: int, alpha: int, beta: int
-    ) -> tuple[int, Move | None]:
+    def minimax(self, board: Board, depth: int) -> tuple[int, Move | None]:
         if depth == 0:
             return self.evaluate(board), None
 
         if board.white_to_move:
             max_eval = -INFINITY
-            best_move = None
+            max_move = None
 
             for move in board.get_legal_moves():
                 child = board.make_move(move)
-                eval = self.minimax(child, depth - 1, alpha, beta)[0]
+                eval = self.minimax(child, depth - 1)[0]
 
                 if eval >= max_eval:
                     max_eval = eval
-                    best_move = move
+                    max_move = move
 
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
-
-            return max_eval, best_move
+            return max_eval, max_move
 
         else:
             min_eval = INFINITY
-            best_move = None
+            min_move = None
 
             for move in board.get_legal_moves():
                 child = board.make_move(move)
-                eval = self.minimax(child, depth - 1, alpha, beta)[0]
+                eval = self.minimax(child, depth - 1)[0]
 
                 if eval <= min_eval:
                     min_eval = eval
-                    best_move = move
+                    min_move = move
 
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
-
-        return min_eval, best_move
+            return min_eval, min_move
 
     def evaluate(self, board: Board) -> int:
         score = 0
