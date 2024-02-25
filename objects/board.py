@@ -9,7 +9,7 @@ class Board:
 
         if starter_options:
             # set additional options
-            self.white_to_move = True
+            self.white_to_move = False
             self.last_move = None
             self.w_castle_k = True
             self.w_castle_q = True

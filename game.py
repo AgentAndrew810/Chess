@@ -27,6 +27,7 @@ class Game(DrawnObject):
         self.board = Board(CHESS_POSITION, True)
         self.next_moves = self.board.get_legal_moves()
 
+
     def update(self) -> None:
         self.load_images()
 

@@ -21,3 +21,6 @@ class Move:
     @property
     def new_pos(self) -> tuple[int, int]:
         return (self.new_rank, self.new_file)
+    
+    def __repr__(self) -> str:
+        return f"{self.old_pos} to {self.new_pos}"
