@@ -64,45 +64,38 @@ class Board:
         board.board[move.old_rank][move.old_file] = ""
 
         # update additional information
-        board.white_to_move = not self.white_to_move
         board.last_move = move
+        board.white_to_move = not self.white_to_move
         board.white_king = self.white_king
         board.black_king = self.black_king
 
-        # update castle rights
+        # set default castle rights
         board.w_castle_k = self.w_castle_k
         board.w_castle_q = self.w_castle_q
         board.b_castle_k = self.b_castle_k
         board.b_castle_q = self.b_castle_q
 
-        # update king location and castle rights if it moved
+        castling = move.castling_type
+        if castling:
+            if castling == "K":
+                board.board[7][5] = "R"
+                board.board[7][7] = ""
+            elif castling == "Q":
+                board.board[7][3] = "R"
+                board.board[7][0] = ""
+            elif castling == "k":
+                board.board[0][5] = "r"
+                board.board[0][7] = ""
+            elif castling == "q":
+                board.board[0][3] = "r"
+                board.board[0][0] = ""
+
+        # update king location and castle rights if king moved
         if piece == "K":
-            if move.old_pos == (7, 4):
-                if move.new_pos == (7, 6):
-                    if board.board[7][7] == "R":
-                        board.board[7][5] = "R"
-                        board.board[7][7] = ""
-
-                elif move.new_pos == (7, 2):
-                    if board.board[7][0] == "R":
-                        board.board[7][3] = "R"
-                        board.board[7][0] = ""
-
             board.white_king = move.new_pos
             board.w_castle_k = False
             board.w_castle_q = False
         elif piece == "k":
-            if move.old_pos == (0, 4):
-                if move.new_pos == (0, 6):
-                    if board.board[0][7] == "r":
-                        board.board[0][5] = "r"
-                        board.board[0][7] = ""
-
-                elif move.new_pos == (0, 2):
-                    if board.board[0][0] == "r":
-                        board.board[0][3] = "r"
-                        board.board[0][0] = ""
-
             board.black_king = move.new_pos
             board.b_castle_k = False
             board.b_castle_q = False
@@ -182,38 +175,6 @@ class Board:
                 elif piece.upper() == "N":  # knight
                     moves.extend(self.get_piece_moves(rank, file, K_OFFSETS, False))
 
-                elif piece.upper() == "K":  # king
-                    moves.extend(
-                        self.get_piece_moves(rank, file, C_OFFSETS + D_OFFSETS, False)
-                    )
-
-                    # castling
-                    if piece == "K" and (rank, file) == (7, 4):
-                        if self.w_castle_k:
-                            if not self.board[7][5] and not self.board[7][6]:
-                                moves.append(Move(rank, file, rank, file + 2))
-
-                        if self.w_castle_q:
-                            if (
-                                not self.board[7][3]
-                                and not self.board[7][2]
-                                and not self.board[7][1]
-                            ):
-                                moves.append(Move(rank, file, rank, file - 2))
-
-                    elif piece == "k" and (rank, file) == (0, 4):
-                        if self.b_castle_k:
-                            if not self.board[0][5] and not self.board[0][6]:
-                                moves.append(Move(rank, file, rank, file + 2))
-
-                        if self.b_castle_q:
-                            if (
-                                not self.board[0][3]
-                                and not self.board[0][2]
-                                and not self.board[0][1]
-                            ):
-                                moves.append(Move(rank, file, rank, file - 2))
-
                 elif piece.upper() == "B":  # bishop
                     moves.extend(self.get_piece_moves(rank, file, D_OFFSETS, True))
 
@@ -224,6 +185,48 @@ class Board:
                     moves.extend(
                         self.get_piece_moves(rank, file, C_OFFSETS + D_OFFSETS, True)
                     )
+
+                elif piece.upper() == "K":  # king
+                    moves.extend(
+                        self.get_piece_moves(rank, file, C_OFFSETS + D_OFFSETS, False)
+                    )
+
+                    # castling
+                    if piece == "K" and (rank, file) == (7, 4):
+                        if self.w_castle_k:
+                            if (
+                                not self.board[7][5]
+                                and not self.board[7][6]
+                                and self.board[7][7] == "R"
+                            ):
+                                moves.append(Move(rank, file, rank, file + 2, "K"))
+
+                        if self.w_castle_q:
+                            if (
+                                not self.board[7][3]
+                                and not self.board[7][2]
+                                and not self.board[7][1]
+                                and self.board[7][0] == "R"
+                            ):
+                                moves.append(Move(rank, file, rank, file - 2, "Q"))
+
+                    elif piece == "k" and (rank, file) == (0, 4):
+                        if self.b_castle_k:
+                            if (
+                                not self.board[0][5]
+                                and not self.board[0][6]
+                                and self.board[0][7] == "r"
+                            ):
+                                moves.append(Move(rank, file, rank, file + 2, "k"))
+
+                        if self.b_castle_q:
+                            if (
+                                not self.board[0][3]
+                                and not self.board[0][2]
+                                and not self.board[0][1]
+                                and self.board[0][0] == "r"
+                            ):
+                                moves.append(Move(rank, file, rank, file - 2, "q"))
 
         return moves
 
