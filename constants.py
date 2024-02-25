@@ -20,11 +20,11 @@ K_OFFSETS = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, 
 C_OFFSETS = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 D_OFFSETS = [(-1, -1), (1, 1), (-1, 1), (1, -1)]
 
-# set infinity to 100 thousand
-INFINITY = 100000
+# set infinity to one million
+INFINITY = 1000000
 
 # the value of pieces
-PIECE_VALUES = {"P": 100, "B": 330, "N": 320, "R": 500, "Q": 900, "K": INFINITY}
+PIECE_VALUES = {"P": 100, "B": 330, "N": 320, "R": 500, "Q": 900, "K": 20000}
 
 # starting chess position
 CHESS_POSITION = [
