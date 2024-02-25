@@ -1,5 +1,4 @@
 import pygame
-import time
 from objects.engine import Engine
 from objects.board import Board
 from objects.drawnobject import DrawnObject
@@ -88,12 +87,10 @@ class Game(DrawnObject):
         self.held_piece = None
 
     def make_computer_move(self) -> None:
-        t = time.time()
         move = self.engine.search(self.board)
         if move:
             self.board = self.board.make_move(move)
             self.next_moves = self.board.get_legal_moves()
-            print(f"Time to make Move: {round(time.time()-t, 4)}s")
 
             if len(self.next_moves) == 0:
                 self.is_over = True

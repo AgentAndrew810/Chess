@@ -1,3 +1,4 @@
+import time
 from objects.board import Board
 from objects.move import Move
 from constants import PIECE_VALUES, PIECE_TABLES, INFINITY
@@ -14,12 +15,16 @@ class Engine:
             self.BLACK_PIECE_TABLES[piece.lower()] = reversed_table
 
     def search(self, board: Board) -> Move | None:
+        current_time = time.time()
+
         eval, move = self.minimax(board, 3, -INFINITY, INFINITY)
 
         if eval > 0:
             print(f"White is up {round(eval/100, 2)} pieces!")
         else:
             print(f"Black is up {round(-eval/100, 2)} pieces!")
+
+        print(f"Computer Move Time: {round(time.time()-current_time, 3)}\n")
 
         return move
 
