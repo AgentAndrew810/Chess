@@ -42,12 +42,12 @@ class Engine:
                 child = board.make_move(move)
                 eval = self.minimax(child, depth - 1, alpha, beta)[0]
 
-                if eval > max_eval:
+                if eval >= max_eval:
                     max_eval = eval
                     best_move = move
 
                 alpha = max(alpha, eval)
-                if alpha >= beta:
+                if beta <= alpha:
                     break
 
             return max_eval, best_move
@@ -60,7 +60,7 @@ class Engine:
                 child = board.make_move(move)
                 eval = self.minimax(child, depth - 1, alpha, beta)[0]
 
-                if eval < min_eval:
+                if eval <= min_eval:
                     min_eval = eval
                     best_move = move
 
