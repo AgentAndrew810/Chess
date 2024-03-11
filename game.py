@@ -4,6 +4,7 @@ from objects.board import Board
 from objects.drawnobject import DrawnObject
 from constants import (
     BLUE,
+    DARK_BLUE,
     WHITE,
     PINK,
     YELLOW,
@@ -26,7 +27,6 @@ class Game(DrawnObject):
         self.engine = Engine()
         self.board = Board(CHESS_POSITION, True)
         self.next_moves = self.board.get_legal_moves()
-
 
     def update(self) -> None:
         self.load_images()
@@ -119,13 +119,13 @@ class Game(DrawnObject):
         )
 
     def draw(self, screen: pygame.surface.Surface) -> None:
-        screen.fill((75, 100, 145))
+        screen.fill(BLUE)
 
         # draw the checkerboard
         for rank in range(8):
             for file in range(8):
                 # determine colour of square based on if the sum of the rank and file is even or odd
-                colour = WHITE if (rank + file) % 2 == 0 else BLUE
+                colour = WHITE if (rank + file) % 2 == 0 else DARK_BLUE
 
                 # highlight squares part of the last move
                 last_move = self.board.last_move
